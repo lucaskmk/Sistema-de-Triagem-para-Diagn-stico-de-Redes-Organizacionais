@@ -1,0 +1,6 @@
+{
+  "name": "Insper Network Hub - Diagnóstico Organizacional",
+  "description": "MVP de software para diagnóstico organizacional baseado em análise de redes (SNA), traduzindo linguagem de negócio em métricas analíticas.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
