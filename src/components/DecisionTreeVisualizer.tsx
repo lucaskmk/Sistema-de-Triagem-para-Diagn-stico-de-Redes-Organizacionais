@@ -221,6 +221,7 @@ export default function DecisionTreeVisualizer({ onClose }: { onClose: () => voi
   const dragStart = useRef({ x: 0, y: 0 });
   const lastTouchDist = useRef<number | null>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
+  const panRef = useRef({ x: 0, y: 0 });
 
   const handleMouseDown = (e: MouseEvent<HTMLDivElement>) => {
     if (e.button !== 0) return;
@@ -247,7 +248,10 @@ export default function DecisionTreeVisualizer({ onClose }: { onClose: () => voi
     setZoom(prev => Math.min(1.5, Math.max(0.5, prev + direction * scaleFactor)));
   };
 
-  // Prevent default to enable wheel zoom + touch pan/pinch
+  // Keep panRef in sync so touch handlers can read current pan without stale closure
+  useEffect(() => { panRef.current = pan; }, [pan]);
+
+  // Prevent default to enable wheel zoom + touch pan/pinch; registered once with refs to avoid re-registration
   useEffect(() => {
     const el = viewportRef.current;
     if (!el) return;
@@ -255,11 +259,12 @@ export default function DecisionTreeVisualizer({ onClose }: { onClose: () => voi
     const onWheel = (e: WheelEvent) => { e.preventDefault(); };
 
     const onTouchStart = (e: TouchEvent) => {
+      if ((e.target as HTMLElement).closest('button')) return;
       if (e.touches.length === 1) {
         setIsPanning(true);
         dragStart.current = {
-          x: e.touches[0].clientX - pan.x,
-          y: e.touches[0].clientY - pan.y,
+          x: e.touches[0].clientX - panRef.current.x,
+          y: e.touches[0].clientY - panRef.current.y,
         };
         lastTouchDist.current = null;
       } else if (e.touches.length === 2) {
@@ -271,12 +276,15 @@ export default function DecisionTreeVisualizer({ onClose }: { onClose: () => voi
     };
 
     const onTouchMove = (e: TouchEvent) => {
+      if ((e.target as HTMLElement).closest('button')) return;
       e.preventDefault();
       if (e.touches.length === 1) {
-        setPan({
+        const newPan = {
           x: e.touches[0].clientX - dragStart.current.x,
           y: e.touches[0].clientY - dragStart.current.y,
-        });
+        };
+        panRef.current = newPan;
+        setPan(newPan);
       } else if (e.touches.length === 2 && lastTouchDist.current !== null) {
         const dx = e.touches[0].clientX - e.touches[1].clientX;
         const dy = e.touches[0].clientY - e.touches[1].clientY;
@@ -302,7 +310,7 @@ export default function DecisionTreeVisualizer({ onClose }: { onClose: () => voi
       el.removeEventListener('touchmove', onTouchMove);
       el.removeEventListener('touchend', onTouchEnd);
     };
-  }, [pan]);
+  }, []);
 
   const centerAndFitTree = () => {
     if (viewportRef.current) {
