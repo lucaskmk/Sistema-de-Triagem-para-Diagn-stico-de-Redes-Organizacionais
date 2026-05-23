@@ -28,57 +28,57 @@ interface TreeNode {
 
 const TREE_DATA: Record<string, TreeNode> = {
   'Fluxo A: Papéis-Chave': {
-    label: 'Mapear Papéis-Chave de um colaborador (Fluxo Individual)',
+    label: 'Quero identificar papéis-chave de um funcionário (influência, demanda, fluxo de informação ou seu ambiente pessoal na área de trabalho).',
     type: 'category',
     children: {
-      'Influência e Demanda': {
-        label: 'Mapear Influência e Demanda (Quem é referência / pop)',
+      'Mapear Influência e Demanda': {
+        label: 'Descobrir quem são as pessoas mais requisitadas na operação por popularidade (quantidade) ou influência (qualidade).',
         type: 'question',
         children: {
           'A referência operacional (Quantidade)': {
-            label: 'Identificar referência por volume direto de busca de suporte (Quantidade)',
+            label: 'Quero identificar a pessoa que tem um grande número absoluto de contatos diretos apontando para ela.',
             type: 'metric',
             metricName: 'Centralidade de Grau de Entrada (In-Degree)',
             bizMeaning: 'O Grau de Entrada conta quantas pessoas buscam esse nó para perguntas ou suporte no cotidiano, revelando a referência operacional de fato e sobrecargas estruturais.'
           },
           'A liderança simbólica ou prestígio (Qualidade)': {
-            label: 'Identificar liderança informal conectada com quem já é influente (Qualidade)',
+            label: 'Quero identificar quem está conectado a contatos que também são muito influentes e importantes na organização.',
             type: 'metric',
             metricName: 'Centralidade de Autovalor (Eigenvector) / PageRank',
             bizMeaning: 'O profissional ganha relevância não pela quantidade absoluta de contatos, mas por estar conectado a pessoas altamente influentes. Ideal para achar formadores de opinião.'
           }
         }
       },
-      'Fluxo de Informação': {
-        label: 'Mapear o Fluxo de Informação (Como circulam recados)',
+      'Mapear o Fluxo de Informação': {
+        label: 'Entender como as mensagens viajam pela empresa: quem espalha recados rápido ou quem controla o que passa entre as áreas.',
         type: 'question',
         children: {
           'O gargalo ou a ponte de caminhos': {
-            label: 'Pessoa que serve como canal exclusivo conectando dois grupos isolados',
+            label: 'O profissional que serve como ponte direta conectando duas áreas que não se falam diretamente.',
             type: 'metric',
             metricName: 'Centralidade de Intermediação (Betweenness)',
             bizMeaning: 'Mede a frequência com que o profissional está presente nos caminhos mais curtos de comunicação entre setores. Sem ele, a integração interdepartamental trava.'
           },
           'O comunicador rápido': {
-            label: 'Pessoa que consegue disseminar recados para toda a rede no menor tempo',
+            label: 'Quem consegue espalhar um recado para o maior número de pessoas dentro da empresa no menor tempo médio possível.',
             type: 'metric',
             metricName: 'Centralidade de Proximidade (Closeness)',
             bizMeaning: 'Calcula a média de saltos (distância mais curta) para alcançar qualquer outro colaborador. Quanto menor a distância média, mais rápido o contágio de informação.'
           }
         }
       },
-      'Ambiente Pessoal': {
-        label: 'Mapear o Ambiente Pessoal (Ego Networks / Bolha)',
+      'Mapear o Ambiente Pessoal': {
+        label: 'Entender a importância de um funcionário na área de trabalho e quanto ele pode impactar seus contatos (sua bolha específica).',
         type: 'question',
         children: {
-          'O inovador de fora da "bolha"': {
-            label: 'Verificar se o colaborador possui múltiplos contatos não-redundantes',
+          'O inovador de fora da bolha': {
+            label: 'Achar quem tem uma rede de contatos rica porque conversa com grupos diferentes que não se conhecem, trazendo ideias de outras áreas.',
             type: 'metric',
             metricName: 'Baixa Restrição de Burt (Structural Holes)',
             bizMeaning: 'Avalia a teoria dos buracos estruturais. Baixa restrição significa que a vizinhança direta não é interconectada, gerando acesso a ideias diversas e inovação.'
           },
           'Um raio-X individual do funcionário': {
-            label: 'Visualizar detalhadamente a vizinhança local de um só indivíduo na rede',
+            label: 'Análise detalhada ao redor de um funcionário específico (ex: um gerente recém-promovido) para ver como sua vizinhança mudou.',
             type: 'metric',
             metricName: 'Redes Egocentradas (Ego Networks)',
             bizMeaning: 'Concentra-se na rede do próprio funcionário (Ego) e de seus vizinhos de 1º grau (Alters). Útil para acompanhamento pós-promoção e coaching de liderança.'
@@ -88,39 +88,39 @@ const TREE_DATA: Record<string, TreeNode> = {
     }
   },
   'Fluxo B: Saúde de Equipes': {
-    label: 'Saúde dos times e conexões gerais (Fluxo Coletivo)',
+    label: 'Quero entender a saúde dos times e conexões da empresa (silos, trust, panelinhas ou filiais isoladas).',
     type: 'category',
     children: {
-      'Silos, bolhas ou grupos isolados': {
-        label: 'Mapeamento de Isolamento, Silos e Divisões na empresa',
+      'Qual problema ou padrão você quer analisar?': {
+        label: 'Qual problema ou padrão você deseja analisar sobre a saúde das equipes e conexões?',
         type: 'question',
         children: {
-          'Quero entender quem são esses grupos': {
-            label: 'Identificar a segmentação orgânica dos times no dia a dia informal',
-            type: 'metric',
-            metricName: 'Detecção de Comunidades (Girvan-Newman) + Modularidade (Q)',
-            bizMeaning: 'Heurística que encontra agrupamentos coesos na prática de comunicação. O índice de Modularidade quantifica se esses silos são graves ou naturais.'
+          'A empresa parece dividida em silos, bolhas ou grupos isolados': {
+            label: 'A empresa parece dividida em silos, bolhas ou grupos isolados',
+            type: 'question',
+            children: {
+              'Quero entender quem são esses grupos e quão desconectados eles são da rede': {
+                label: 'Quero entender quem são esses grupos e quão desconectados eles são da rede',
+                type: 'metric',
+                metricName: 'Detecção de Comunidades (Girvan-Newman) + Modularidade (Q)',
+                bizMeaning: 'Heurística que encontra agrupamentos coesos na prática de comunicação. O índice de Modularidade quantifica se esses silos são graves ou naturais.'
+              },
+              'Sinto que existe uma elite que decide tudo entre eles, enquanto a base está isolada': {
+                label: 'Sinto que existe uma elite que decide tudo entre eles, enquanto a base está isolada',
+                type: 'metric',
+                metricName: 'Estrutura Centro-Periferia (Core-Periphery)',
+                bizMeaning: 'Foca na segregação vertical. Segmenta o time em uma elite hiperconectada (core) e uma maioria de membros pouco engajados entre si (periferia).'
+              },
+              'Suspeito que exista algum departamento ou filial inteira literalmente desconectado': {
+                label: 'Suspeito que exista algum departamento ou filial inteira literalmente desconectado',
+                type: 'metric',
+                metricName: 'Detecção de Componentes Isolados e Subgrafos',
+                bizMeaning: 'Algoritmo que localiza seções da empresa operando em total isolamento informacional, isto é, com ausência completa de caminhos para a base gigante.'
+              }
+            }
           },
-          'Sinto que existe uma elite central': {
-            label: 'Testar se há um grupo restrito decidindo tudo enquanto a base está isolada',
-            type: 'metric',
-            metricName: 'Estrutura Centro-Periferia (Core-Periphery)',
-            bizMeaning: 'Foca na segregação vertical. Segmenta o time em uma elite hiperconectada (core) e uma maioria de membros pouco engajados entre si (periferia).'
-          },
-          'Departamento / Filial desconetado': {
-            label: 'Foco na busca de componentes ou subgrupos com zero interligação com o core',
-            type: 'metric',
-            metricName: 'Detecção de Componentes Isolados e Subgrafos',
-            bizMeaning: 'Algoritmo que localiza seções da empresa operando em total isolamento informacional, isto é, com ausência completa de caminhos para a base gigante.'
-          }
-        }
-      },
-      'Confiança mútua nas pequenas equipes': {
-        label: 'Mapeamento de Segurança Psicológica de Microteams',
-        type: 'question',
-        children: {
-          'Amigos de amigos se conhecem': {
-            label: 'Assegurar que pessoas do time confiam mutuamente e dividem rotinas',
+          'Quero saber se as pequenas equipes têm confiança mútua (se trabalham bem juntos)': {
+            label: 'Quero saber se as pequenas equipes têm confiança mútua (se trabalham bem juntos)',
             type: 'metric',
             metricName: 'Coeficiente de Agrupamento Local (Transitividade na vizinhança)',
             bizMeaning: 'Indica a proporção de triângulos fechados de suporte. Se os meus contatos se ajudam mutuamente de forma direta, o time possui alta coesão e confiança.'
@@ -130,36 +130,36 @@ const TREE_DATA: Record<string, TreeNode> = {
     }
   },
   'Fluxo C: Correlação e Modelos': {
-    label: 'Influência entre métricas (Estatística e Modelagem)',
+    label: 'Quero entender como uma ou mais métricas influenciam uma outra (relação entre variáveis ou previsão de resultados/turnover).',
     type: 'category',
     children: {
-      'Relação simples entre duas frentes': {
-        label: 'Verificar se existe correlação empírica significativa',
+      'Que tipo de correlação ou modelo você quer verificar?': {
+        label: 'Que tipo de dinâmica ou correlação estatística você deseja verificar?',
         type: 'question',
         children: {
-          'Compara Distribuições de RH': {
-            label: 'Comprovar relações qualitativas vs quantitativas (ex: presencial vs remoto)',
+          'Quero só entender apenas se há uma relação': {
+            label: 'Quero só entender apenas se há uma relação',
             type: 'metric',
             metricName: 'Testes de Hipótese (Wilcoxon-Mann-Whitney)',
             bizMeaning: 'Tratamento estatístico adequado para provar formalmente se distribuições de métricas de rede (centralidades) realmente diferem entre grupos do RH.'
-          }
-        }
-      },
-      'Previsão Multivariada de Resultados': {
-        label: 'Explicar/Prever desfechos organizacionais (ex: turnover, performance)',
-        type: 'question',
-        children: {
-          'Não é binária (Prever val. contínuo)': {
-            label: 'Prever valores exatos contínuos (ex: faturamento individual ou bônus)',
-            type: 'metric',
-            metricName: 'Regressão Linear Múltipla (OLS)',
-            bizMeaning: 'Modelagem estatística robusta que analisa como cada ponto de centralidade de rede contribui para prever retornos de performance financeira.'
           },
-          'Sim, é binária (Prever Sim ou Não)': {
-            label: 'Prever eventos discretos booleanos binários (ex: pediu demissão ou promovido)',
-            type: 'metric',
-            metricName: 'Regressão Logística Múltipla (LOGIT)',
-            bizMeaning: 'Calcula matematicamente o risco real de turnover (log-odds) em função do nível de isolamento do colaborador na área, gerando alertas preventivos.'
+          'Prever um RESULTADO usando várias variáveis ao mesmo tempo': {
+            label: 'Prever um RESULTADO usando várias variáveis ao mesmo tempo',
+            type: 'question',
+            children: {
+              'Não é binária (Prever um valor numérico contínuo)': {
+                label: 'Não é binária (Prever um valor numérico contínuo)',
+                type: 'metric',
+                metricName: 'Regressão Linear Múltipla (OLS)',
+                bizMeaning: 'Modelagem estatística robusta que analisa como cada ponto de centralidade de rede contribui para prever retornos de performance financeira.'
+              },
+              'Sim, é binária (Prever um evento de sim ou não)': {
+                label: 'Sim, é binária (Prever um evento de sim ou não)',
+                type: 'metric',
+                metricName: 'Regressão Logística Múltipla (LOGIT)',
+                bizMeaning: 'Calcula matematicamente o risco real de turnover (log-odds) em função do nível de isolamento do colaborador na área, gerando alertas preventivos.'
+              }
+            }
           }
         }
       }
@@ -306,9 +306,14 @@ export default function DecisionTreeVisualizer({ onClose }: { onClose: () => voi
 
   // Helper inside component to calculate dynamic column formatting and line math
   const getColWidth = (qNode: any) => {
-    const leafCount = qNode.children ? Object.keys(qNode.children).length : 1;
-    // Each leaf takes exactly 340px of space, plus a gap of 48px to allow full breathing room
-    return leafCount * 340 + (leafCount - 1) * 48;
+    if (!qNode.children) return 340;
+    const slots = Object.values(qNode.children as Record<string, any>).reduce((acc: number, leaf: any) => {
+      if (leaf.type === 'question' && leaf.children && Object.keys(leaf.children).length > 0) {
+        return acc + Object.keys(leaf.children).length;
+      }
+      return acc + 1;
+    }, 0);
+    return slots * 340 + (slots - 1) * 48;
   };
 
   const colWidths = Object.values(categoryData.children || {}).map(getColWidth);
@@ -558,62 +563,97 @@ export default function DecisionTreeVisualizer({ onClose }: { onClose: () => voi
                     </div>
 
                     {/* Grandchildren level nodes (Leaf options leading to metrics) */}
-                    {hasNextChildren && (
-                      <div className="relative flex flex-row items-stretch justify-center gap-[48px] pt-10 w-full z-10">
-                        {/* Connecting horizontal line between sibling choices (hidden on mobile, centered on desktop) */}
-                        {Object.keys(qNode.children || {}).length > 1 && (
-                          <div 
-                            className="absolute top-0 h-[2px] bg-slate-300 hidden md:block" 
-                            style={{
-                              left: `${100 / (2 * Object.keys(qNode.children || {}).length)}%`,
-                              right: `${100 / (2 * Object.keys(qNode.children || {}).length)}%`
-                            }}
-                          />
-                        )}
-                        
-                        {Object.entries(qNode.children || {}).map(([leafKey, leafNode]) => {
-                          const hasMetricChildren = leafNode.children && Object.keys(leafNode.children).length > 0;
+                    {hasNextChildren && (() => {
+                      const leafWidthsList = Object.values(qNode.children || {}).map((leaf: any) => {
+                        if (leaf.type === 'question' && leaf.children && Object.keys(leaf.children).length > 0) {
+                          const sc = Object.keys(leaf.children).length;
+                          return sc * 340 + (sc - 1) * 48;
+                        }
+                        return 340;
+                      });
+                      const firstLeafW = leafWidthsList[0] || 340;
+                      const lastLeafW = leafWidthsList[leafWidthsList.length - 1] || 340;
 
-                          return (
-                            <div key={leafKey} className="flex flex-col items-center gap-4 relative w-[340px] flex-shrink-0">
-                              {/* Small vertical connector from sister line to leaf card */}
-                              <div className="absolute -top-10 w-[2px] h-10 bg-slate-300 hidden md:block" />
-                              
-                              {/* Option Question / Option selected Box */}
-                              <div className="bg-slate-100 hover:bg-slate-200/85 border border-slate-200 rounded-xl px-4 py-3 text-slate-700 w-full text-center text-xs font-semibold leading-normal shadow-xs transition-colors relative z-10">
-                                <span className="text-[9px] text-slate-500 font-extrabold uppercase tracking-wide block mb-0.5">Opção Escolhida</span>
-                                {leafNode.label}
+                      return (
+                        <div className="relative flex flex-row items-start justify-center gap-[48px] pt-10 w-full z-10">
+                          {Object.keys(qNode.children || {}).length > 1 && (
+                            <div
+                              className="absolute top-0 h-[2px] bg-slate-300 hidden md:block"
+                              style={{ left: `${firstLeafW / 2}px`, right: `${lastLeafW / 2}px` }}
+                            />
+                          )}
+
+                          {Object.entries(qNode.children || {}).map(([leafKey, leafNode]) => {
+                            const isSubQuestion = leafNode.type === 'question' && !!leafNode.children && Object.keys(leafNode.children).length > 0;
+                            const hasMetricChildren = !isSubQuestion && !!leafNode.children && Object.keys(leafNode.children).length > 0;
+                            const subSlots = isSubQuestion ? Object.keys(leafNode.children || {}).length : 1;
+                            const leafW = subSlots * 340 + (subSlots - 1) * 48;
+
+                            return (
+                              <div key={leafKey} className="flex flex-col items-center gap-4 relative flex-shrink-0" style={{ width: `${leafW}px` }}>
+                                <div className="absolute -top-10 w-[2px] h-10 bg-slate-300 hidden md:block" />
+
+                                <div className="bg-slate-100 hover:bg-slate-200/85 border border-slate-200 rounded-xl px-4 py-3 text-slate-700 max-w-[340px] w-full mx-auto text-center text-xs font-semibold leading-normal shadow-xs transition-colors relative z-10">
+                                  <span className="text-[9px] text-slate-500 font-extrabold uppercase tracking-wide block mb-0.5">Opção Escolhida</span>
+                                  {leafNode.label}
+                                </div>
+
+                                {isSubQuestion ? (
+                                  <div className="relative flex flex-row items-start justify-center gap-[48px] pt-10 w-full z-10">
+                                    <div className="absolute -top-[40px] left-1/2 -translate-x-1/2 w-[2px] h-[20px] bg-slate-300 hidden md:block" />
+                                    {subSlots > 1 && (
+                                      <div
+                                        className="absolute top-0 h-[2px] bg-slate-300 hidden md:block"
+                                        style={{ left: `${340 / 2}px`, right: `${340 / 2}px` }}
+                                      />
+                                    )}
+                                    {Object.entries(leafNode.children || {}).map(([subKey, subNode]) => (
+                                      <div key={subKey} className="flex flex-col items-center gap-4 relative w-[340px] flex-shrink-0">
+                                        <div className="absolute -top-10 w-[2px] h-10 bg-slate-300 hidden md:block" />
+                                        <div className="bg-slate-100 hover:bg-slate-200/85 border border-slate-200 rounded-xl px-4 py-3 text-slate-700 w-full text-center text-xs font-semibold leading-normal shadow-xs transition-colors relative z-10">
+                                          <span className="text-[9px] text-slate-500 font-extrabold uppercase tracking-wide block mb-0.5">Opção Escolhida</span>
+                                          {subNode.label}
+                                        </div>
+                                        <div className="w-[2px] h-6 bg-slate-300" />
+                                        <VisualizerMetricNode
+                                          label={subKey}
+                                          metricName={subNode.metricName || ''}
+                                          bizMeaning={subNode.bizMeaning || ''}
+                                        />
+                                      </div>
+                                    ))}
+                                  </div>
+                                ) : (
+                                  <>
+                                    <div className="w-[2px] h-6 bg-slate-300" />
+                                    {hasMetricChildren ? (
+                                      <div className="space-y-4 w-full relative z-10">
+                                        {Object.entries(leafNode.children || {}).map(([metricKey, metricNode]) => (
+                                          <VisualizerMetricNode
+                                            key={metricKey}
+                                            label={metricKey}
+                                            metricName={metricNode.metricName || ''}
+                                            bizMeaning={metricNode.bizMeaning || ''}
+                                          />
+                                        ))}
+                                      </div>
+                                    ) : (
+                                      <div className="w-full relative z-10">
+                                        <VisualizerMetricNode
+                                          label={leafKey}
+                                          metricName={leafNode.metricName || ''}
+                                          bizMeaning={leafNode.bizMeaning || ''}
+                                        />
+                                      </div>
+                                    )}
+                                  </>
+                                )}
                               </div>
-
-                              {/* Small vertical link to the final metric below */}
-                              <div className="w-[2px] h-6 bg-slate-300" />
-
-                              {/* Metric component directly */}
-                              {hasMetricChildren ? (
-                                <div className="space-y-4 w-full relative z-10">
-                                  {Object.entries(leafNode.children || {}).map(([metricKey, metricNode]) => (
-                                    <VisualizerMetricNode
-                                      key={metricKey}
-                                      label={metricKey}
-                                      metricName={metricNode.metricName || ''}
-                                      bizMeaning={metricNode.bizMeaning || ''}
-                                    />
-                                  ))}
-                                </div>
-                              ) : (
-                                <div className="w-full relative z-10">
-                                  <VisualizerMetricNode
-                                    label={leafKey}
-                                    metricName={leafNode.metricName || ''}
-                                    bizMeaning={leafNode.bizMeaning || ''}
-                                  />
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
+                            );
+                          })}
+                        </div>
+                      );
+                    })()}
                   </div>
                 );
               })}

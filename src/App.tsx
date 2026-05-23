@@ -426,22 +426,10 @@ export default function App() {
       </AnimatePresence>
 
       {/* Footer Decoration */}
-      <footer className="max-w-7xl mx-auto mt-20 pt-8 border-t border-slate-100 flex flex-col md:flex-row items-center justify-between gap-4 text-slate-400 text-xs">
-        <div className="flex gap-4">
-           <span>© 2026 Insper Network Hub</span>
-           <span className="hidden md:inline">•</span>
-           <span>MVP v1.0 — Karozakura Industries</span>
-        </div>
-        <div className="flex items-center gap-6">
-           <div className="flex items-center gap-2">
-             <User size={14} className="text-slate-300" />
-             <span>Diferenciação Analítica Garantida</span>
-           </div>
-           <div className="flex items-center gap-2">
-             <Target size={14} className="text-slate-300" />
-             <span>Zero Jargão Técnico</span>
-           </div>
-        </div>
+      <footer className="max-w-7xl mx-auto mt-20 pt-8 border-t border-slate-100 flex items-center justify-center gap-4 text-slate-400 text-xs">
+        <span>© 2026 Insper Network Hub</span>
+        <span className="hidden md:inline">•</span>
+        <span>MVP v1.0 — Karozakura Industries</span>
       </footer>
     </div>
   );

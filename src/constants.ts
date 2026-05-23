@@ -53,7 +53,7 @@ export const TREE: Record<string, QuestionNode> = {
   },
   'A.1': {
     id: 'A.1',
-    question: 'O que importa mais para você: a qualidade dos contatos ou a quantidade deles?',
+    question: 'Você está procurando uma pessoa com número maior de contatos (quantidade) ou com contatos mais importantes (qualidade)?',
     options: [
       { 
         id: 'in_degree', 
