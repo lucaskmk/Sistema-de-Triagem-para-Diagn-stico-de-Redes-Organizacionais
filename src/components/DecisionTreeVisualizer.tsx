@@ -222,6 +222,7 @@ export default function DecisionTreeVisualizer({ onClose }: { onClose: () => voi
   const lastTouchDist = useRef<number | null>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const panRef = useRef({ x: 0, y: 0 });
+  const zoomRef = useRef(0.9);
 
   const handleMouseDown = (e: MouseEvent<HTMLDivElement>) => {
     if (e.button !== 0) return;
@@ -248,8 +249,9 @@ export default function DecisionTreeVisualizer({ onClose }: { onClose: () => voi
     setZoom(prev => Math.min(1.5, Math.max(0.5, prev + direction * scaleFactor)));
   };
 
-  // Keep panRef in sync so touch handlers can read current pan without stale closure
+  // Keep refs in sync so touch handlers read current values without stale closure
   useEffect(() => { panRef.current = pan; }, [pan]);
+  useEffect(() => { zoomRef.current = zoom; }, [zoom]);
 
   // Prevent default to enable wheel zoom + touch pan/pinch; registered once with refs to avoid re-registration
   useEffect(() => {
@@ -291,13 +293,39 @@ export default function DecisionTreeVisualizer({ onClose }: { onClose: () => voi
         const dist = Math.sqrt(dx * dx + dy * dy);
         const delta = dist - lastTouchDist.current;
         lastTouchDist.current = dist;
-        setZoom((prev: number) => Math.min(1.5, Math.max(0.3, prev + delta * 0.005)));
+
+        const z_old = zoomRef.current;
+        const z_new = Math.min(1.5, Math.max(0.3, z_old + delta * 0.005));
+
+        // Zoom toward the pinch midpoint so content under fingers stays fixed
+        const vRect = el.getBoundingClientRect();
+        const pmx = (e.touches[0].clientX + e.touches[1].clientX) / 2 - vRect.left;
+        const pmy = (e.touches[0].clientY + e.touches[1].clientY) / 2 - vRect.top;
+        const ratio = z_new / z_old;
+        const newPan = {
+          x: panRef.current.x + (pmx - el.clientWidth / 2 - panRef.current.x) * (1 - ratio),
+          y: panRef.current.y + (pmy - 32 - panRef.current.y) * (1 - ratio),
+        };
+
+        panRef.current = newPan;
+        zoomRef.current = z_new;
+        setPan(newPan);
+        setZoom(z_new);
       }
     };
 
-    const onTouchEnd = () => {
-      setIsPanning(false);
+    const onTouchEnd = (e: TouchEvent) => {
       lastTouchDist.current = null;
+      if (e.touches.length === 1) {
+        // One finger lifted from a pinch — re-anchor drag from current position to prevent jump
+        setIsPanning(true);
+        dragStart.current = {
+          x: e.touches[0].clientX - panRef.current.x,
+          y: e.touches[0].clientY - panRef.current.y,
+        };
+      } else {
+        setIsPanning(false);
+      }
     };
 
     el.addEventListener('wheel', onWheel, { passive: false });
@@ -580,8 +608,8 @@ export default function DecisionTreeVisualizer({ onClose }: { onClose: () => voi
               
               {/* Horizontal line connecting all primary question pathways */}
               {totalCols > 1 && (
-                <div 
-                  className="absolute -top-[32px] h-[2px] bg-slate-300 hidden md:block" 
+                <div
+                  className="absolute -top-[32px] h-[2px] bg-slate-300"
                   style={{
                     left: `${colWidth / 2}px`,
                     right: `${colWidth / 2}px`
@@ -600,7 +628,7 @@ export default function DecisionTreeVisualizer({ onClose }: { onClose: () => voi
                     className="flex-shrink-0 flex flex-col items-center relative gap-12"
                   >
                     {/* Small vertical connector from parent horizontal line to the question card */}
-                    <div className="absolute -top-[32px] w-[2px] h-[32px] bg-slate-300 hidden md:block" />
+                    <div className="absolute -top-[32px] w-[2px] h-[32px] bg-slate-300" />
                     
                     {/* Intermediate Question Card */}
                     <div className="relative z-10 w-80 mx-auto">
@@ -610,7 +638,7 @@ export default function DecisionTreeVisualizer({ onClose }: { onClose: () => voi
                       </div>
                       {/* Sub level branch line coming from question card down to sibling choices */}
                       {hasNextChildren && (
-                        <div className="absolute top-full left-1/2 -translate-x-1/2 w-[2px] h-[48px] bg-slate-300 hidden md:block" />
+                        <div className="absolute top-full left-1/2 -translate-x-1/2 w-[2px] h-[48px] bg-slate-300" />
                       )}
                     </div>
 
@@ -630,7 +658,7 @@ export default function DecisionTreeVisualizer({ onClose }: { onClose: () => voi
                         <div className="relative flex flex-row items-start justify-center gap-[48px] pt-10 w-full z-10">
                           {Object.keys(qNode.children || {}).length > 1 && (
                             <div
-                              className="absolute top-0 h-[2px] bg-slate-300 hidden md:block"
+                              className="absolute top-0 h-[2px] bg-slate-300"
                               style={{ left: `${firstLeafW / 2}px`, right: `${lastLeafW / 2}px` }}
                             />
                           )}
@@ -643,7 +671,7 @@ export default function DecisionTreeVisualizer({ onClose }: { onClose: () => voi
 
                             return (
                               <div key={leafKey} className="flex flex-col items-center gap-4 relative flex-shrink-0" style={{ width: `${leafW}px` }}>
-                                <div className="absolute -top-10 w-[2px] h-10 bg-slate-300 hidden md:block" />
+                                <div className="absolute -top-10 w-[2px] h-10 bg-slate-300" />
 
                                 <div className="bg-slate-100 hover:bg-slate-200/85 border border-slate-200 rounded-xl px-4 py-3 text-slate-700 max-w-[340px] w-full mx-auto text-center text-xs font-semibold leading-normal shadow-xs transition-colors relative z-10">
                                   <span className="text-[9px] text-slate-500 font-extrabold uppercase tracking-wide block mb-0.5">Opção Escolhida</span>
@@ -652,16 +680,16 @@ export default function DecisionTreeVisualizer({ onClose }: { onClose: () => voi
 
                                 {isSubQuestion ? (
                                   <div className="relative flex flex-row items-start justify-center gap-[48px] pt-10 w-full z-10">
-                                    <div className="absolute -top-[40px] left-1/2 -translate-x-1/2 w-[2px] h-[20px] bg-slate-300 hidden md:block" />
+                                    <div className="absolute -top-[40px] left-1/2 -translate-x-1/2 w-[2px] h-[20px] bg-slate-300" />
                                     {subSlots > 1 && (
                                       <div
-                                        className="absolute top-0 h-[2px] bg-slate-300 hidden md:block"
+                                        className="absolute top-0 h-[2px] bg-slate-300"
                                         style={{ left: `${340 / 2}px`, right: `${340 / 2}px` }}
                                       />
                                     )}
                                     {Object.entries(leafNode.children || {}).map(([subKey, subNode]) => (
                                       <div key={subKey} className="flex flex-col items-center gap-4 relative w-[340px] flex-shrink-0">
-                                        <div className="absolute -top-10 w-[2px] h-10 bg-slate-300 hidden md:block" />
+                                        <div className="absolute -top-10 w-[2px] h-10 bg-slate-300" />
                                         <div className="bg-slate-100 hover:bg-slate-200/85 border border-slate-200 rounded-xl px-4 py-3 text-slate-700 w-full text-center text-xs font-semibold leading-normal shadow-xs transition-colors relative z-10">
                                           <span className="text-[9px] text-slate-500 font-extrabold uppercase tracking-wide block mb-0.5">Opção Escolhida</span>
                                           {subNode.label}
