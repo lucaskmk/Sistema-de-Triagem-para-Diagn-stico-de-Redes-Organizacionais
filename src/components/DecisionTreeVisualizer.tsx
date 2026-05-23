@@ -219,10 +219,10 @@ export default function DecisionTreeVisualizer({ onClose }: { onClose: () => voi
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isMenuBarHovered, setIsMenuBarHovered] = useState(false);
   const dragStart = useRef({ x: 0, y: 0 });
+  const lastTouchDist = useRef<number | null>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
 
   const handleMouseDown = (e: MouseEvent<HTMLDivElement>) => {
-    // Only scroll if middle click or left click
     if (e.button !== 0) return;
     setIsPanning(true);
     dragStart.current = { x: e.clientX - pan.x, y: e.clientY - pan.y };
@@ -247,18 +247,62 @@ export default function DecisionTreeVisualizer({ onClose }: { onClose: () => voi
     setZoom(prev => Math.min(1.5, Math.max(0.5, prev + direction * scaleFactor)));
   };
 
-  // Prevent default behavior to enable mouse wheel zoom
+  // Prevent default to enable wheel zoom + touch pan/pinch
   useEffect(() => {
     const el = viewportRef.current;
     if (!el) return;
-    const preventSelect = (e: WheelEvent) => {
+
+    const onWheel = (e: WheelEvent) => { e.preventDefault(); };
+
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches.length === 1) {
+        setIsPanning(true);
+        dragStart.current = {
+          x: e.touches[0].clientX - pan.x,
+          y: e.touches[0].clientY - pan.y,
+        };
+        lastTouchDist.current = null;
+      } else if (e.touches.length === 2) {
+        setIsPanning(false);
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        lastTouchDist.current = Math.sqrt(dx * dx + dy * dy);
+      }
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
       e.preventDefault();
+      if (e.touches.length === 1) {
+        setPan({
+          x: e.touches[0].clientX - dragStart.current.x,
+          y: e.touches[0].clientY - dragStart.current.y,
+        });
+      } else if (e.touches.length === 2 && lastTouchDist.current !== null) {
+        const dx = e.touches[0].clientX - e.touches[1].clientX;
+        const dy = e.touches[0].clientY - e.touches[1].clientY;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const delta = dist - lastTouchDist.current;
+        lastTouchDist.current = dist;
+        setZoom((prev: number) => Math.min(1.5, Math.max(0.3, prev + delta * 0.005)));
+      }
     };
-    el.addEventListener('wheel', preventSelect, { passive: false });
+
+    const onTouchEnd = () => {
+      setIsPanning(false);
+      lastTouchDist.current = null;
+    };
+
+    el.addEventListener('wheel', onWheel, { passive: false });
+    el.addEventListener('touchstart', onTouchStart, { passive: false });
+    el.addEventListener('touchmove', onTouchMove, { passive: false });
+    el.addEventListener('touchend', onTouchEnd);
     return () => {
-      el.removeEventListener('wheel', preventSelect);
+      el.removeEventListener('wheel', onWheel);
+      el.removeEventListener('touchstart', onTouchStart);
+      el.removeEventListener('touchmove', onTouchMove);
+      el.removeEventListener('touchend', onTouchEnd);
     };
-  }, []);
+  }, [pan]);
 
   const centerAndFitTree = () => {
     if (viewportRef.current) {

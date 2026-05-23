@@ -154,23 +154,23 @@ const QuestionView = ({ node, onSelect, onBack }: { node: QuestionNode, onSelect
       {node.question}
     </h2>
 
-    <div className="space-y-4">
+    <div className="space-y-3">
       {node.options.map((opt) => (
         <button
           key={opt.id}
           onClick={() => onSelect(opt.id)}
-          className="w-full text-left p-5 rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-md hover:border-blue-200 group transition-all"
+          className="w-full text-left px-5 py-5 rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-md hover:border-blue-200 active:bg-blue-50 active:scale-[0.99] group transition-all touch-manipulation"
         >
-          <div className="flex items-center justify-between">
-            <div className="flex-1">
-              <div className="font-bold text-lg text-slate-800 mb-1 flex items-center gap-2">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex-1 min-w-0">
+              <div className="font-bold text-base md:text-lg text-slate-800 mb-1 leading-snug">
                 {opt.label}
               </div>
               {opt.description && (
-                <p className="text-slate-500 text-sm">{opt.description}</p>
+                <p className="text-slate-500 text-sm leading-relaxed">{opt.description}</p>
               )}
             </div>
-            <ChevronRight className="text-slate-300 group-hover:text-blue-500 group-hover:translate-x-1 transition-all" />
+            <ChevronRight className="flex-shrink-0 text-slate-300 group-hover:text-blue-500 group-hover:translate-x-1 transition-all" />
           </div>
         </button>
       ))}
