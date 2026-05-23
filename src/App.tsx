@@ -427,9 +427,9 @@ export default function App() {
 
       {/* Footer Decoration */}
       <footer className="max-w-7xl mx-auto mt-20 pt-8 border-t border-slate-100 flex items-center justify-center gap-4 text-slate-400 text-xs">
-        <span>© 2026 Insper Network Hub</span>
+        <span>© 2026 Insper Redes Sociais</span>
         <span className="hidden md:inline">•</span>
-        <span>MVP v1.0 — Karozakura Industries</span>
+        <span>Dev por Lucas Kamikawa e Gabriel Vidigal</span>
       </footer>
     </div>
   );
